@@ -4,7 +4,7 @@ from stix2.base import NOW
 
 class PriamTestCase(unittest.TestCase):
     def test_detection(self):
-        detection = Detection(name="Suspicious logon")
+        detection = Detection(name="Suspicious logon",engine="SIGMA",labels=["SIEM"])
         self.assertEqual(detection.name,"Suspicious logon")
 
         obs = ObservedData(number_observed=10,
