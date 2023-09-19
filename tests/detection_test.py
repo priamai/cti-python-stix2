@@ -12,7 +12,7 @@ class PriamTestCase(unittest.TestCase):
                            last_observed="2023-01-01T08:00:01.000Z",
                            object_refs=[detection])
 
-
+        self.assertEqual(obs.object_refs, [detection.id])
     def test_identity(self):
         id1 = Identity(name="Company")
         id2 = Identity(name="Company")
