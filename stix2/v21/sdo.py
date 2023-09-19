@@ -660,7 +660,7 @@ class ObservedData(_DomainObject):
         ('last_observed', TimestampProperty(required=True)),
         ('number_observed', IntegerProperty(min=1, max=999999999, required=True)),
         ('objects', ObservableProperty(spec_version='2.1')),
-        ('object_refs', ListProperty(ReferenceProperty(valid_types=["SCO", "SRO"], spec_version='2.1'))),
+        ('object_refs', ListProperty(ReferenceProperty(valid_types=["SCO", "SRO","detection"], spec_version='2.1'))),
         ('revoked', BooleanProperty(default=lambda: False)),
         ('labels', ListProperty(StringProperty)),
         ('confidence', IntegerProperty()),
