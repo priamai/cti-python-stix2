@@ -9,5 +9,7 @@ pytest-cov
 sphinx<6
 sphinx-prompt
 tox
+pytz
+simplejson
 
 -e .

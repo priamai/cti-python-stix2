@@ -129,7 +129,7 @@ __all__ = """
     AttackPattern, Campaign, CourseOfAction, CustomObject, Grouping, Identity,
     Incident, Indicator, Infrastructure, IntrusionSet, Location, Malware,
     MalwareAnalysis, Note, ObservedData, Opinion, Report, ThreatActor, Tool,
-    Vulnerability,
+    Vulnerability,Detection
 
     Relationship, Sighting,
 
