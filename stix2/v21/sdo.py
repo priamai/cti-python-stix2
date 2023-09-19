@@ -31,6 +31,62 @@ from .vocab import (
 )
 
 
+from stix2.base import _choose_one_hash,_make_json_serializable,canonicalize
+import uuid
+from stix2.base import SCO_DET_ID_NAMESPACE
+class _DomainPriamObject(_DomainObject):
+
+    def __init__(self, **kwargs):
+        super(_DomainObject, self).__init__(**kwargs)
+        if 'id' not in kwargs:
+            # Specific to 2.1+ observables: generate a deterministic ID
+            id_ = self._generate_id()
+
+            # Spec says fall back to UUIDv4 if no contributing properties were
+            # given.  That's what already happened (the following is actually
+            # overwriting the default uuidv4), so nothing to do here.
+            if id_ is not None:
+                # Can't assign to self (we're immutable), so slip the ID in
+                # more sneakily.
+                self._inner["id"] = id_
+
+    def _generate_id(self):
+        """
+        Generate a UUIDv5 for this observable, using its "ID contributing
+        properties".
+
+        :return: The ID, or None if no ID contributing properties are set
+        """
+
+        id_ = None
+        json_serializable_object = {}
+
+        for key in self._id_contributing_properties:
+
+            if key in self:
+                obj_value = self[key]
+
+                if key == "hashes":
+                    serializable_value = _choose_one_hash(obj_value)
+
+                    if serializable_value is None:
+                        raise InvalidValueError(
+                            self, key, "No hashes given",
+                        )
+
+                else:
+                    serializable_value = _make_json_serializable(obj_value)
+
+                json_serializable_object[key] = serializable_value
+
+        if json_serializable_object:
+
+            data = canonicalize(json_serializable_object, utf8=False)
+            uuid_ = uuid.uuid5(SCO_DET_ID_NAMESPACE, data)
+            id_ = "{}--{}".format(self._type, str(uuid_))
+
+        return id_
+
 class AttackPattern(_DomainObject):
     """For more detailed information on this object's properties, see
     `the STIX 2.1 specification <https://docs.oasis-open.org/cti/stix/v2.1/os/stix-v2.1-os.html#_axjijf603msy>`__.
@@ -152,8 +208,7 @@ class Grouping(_DomainObject):
         ('extensions', ExtensionsProperty(spec_version='2.1')),
     ])
 
-
-class Identity(_DomainObject):
+class Identity(_DomainPriamObject):
     """For more detailed information on this object's properties, see
     `the STIX 2.1 specification <https://docs.oasis-open.org/cti/stix/v2.1/os/stix-v2.1-os.html#_wh296fiwpklp>`__.
     """
@@ -181,7 +236,7 @@ class Identity(_DomainObject):
         ('granular_markings', ListProperty(GranularMarking)),
         ('extensions', ExtensionsProperty(spec_version='2.1')),
     ])
-
+    _id_contributing_properties = ["name","description","labels","external_references"]
 
 class Incident(_DomainObject):
     """For more detailed information on this object's properties, see
@@ -827,6 +882,13 @@ class Detection(_DomainObject):
         ('extensions', ExtensionsProperty(spec_version='2.1')),
     ])
 
+    def __init__(self, *args, **kwargs):
+
+        if "engine" in kwargs:
+            if kwargs['engine'] not in ['YARA', 'SURICATA', 'SIGMA', 'SIEM', 'OTHER']:
+                raise ValueError("'%s' is not a recognized category." % kwargs['engine'])
+
+        super(Detection, self).__init__(*args, **kwargs)
 def CustomObject(type='x-custom-type', properties=None, extension_name=None, is_sdo=True):
     """Custom STIX Object type decorator.
 
