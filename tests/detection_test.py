@@ -7,6 +7,7 @@ class PriamTestCase(unittest.TestCase):
     def test_detection(self):
         detection = Detection(name="Suspicious logon",
                               engine="SIGMA",
+                              severity_score=1,
                               fp_counts=1,tp_counts=9,
                               labels=["SIEM"])
 
@@ -36,12 +37,14 @@ class PriamTestCase(unittest.TestCase):
 
         detection = Detection(name="Suspicious logon",
                               engine="SIGMA",
+                              severity_score=10,
                               fp_counts=1,tp_counts=9,
                               labels=["SIEM"])
 
         alert = Alert(name="alert 1",
                       created_by_ref = siem_host,
                       context=ALERT_CONTEXT_RULE,
+                      ranking_score=0.1,
                       object_refs=[detection])
 
         obs = ObservedData(number_observed=10,
