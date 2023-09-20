@@ -27,7 +27,7 @@ from .vocab import (
     INFRASTRUCTURE_TYPE, MALWARE_CAPABILITIES, MALWARE_RESULT, MALWARE_TYPE,
     OPINION, PATTERN_TYPE, PROCESSOR_ARCHITECTURE, REGION, REPORT_TYPE,
     THREAT_ACTOR_ROLE, THREAT_ACTOR_SOPHISTICATION, THREAT_ACTOR_TYPE,
-    TOOL_TYPE,
+    TOOL_TYPE,ALERT_CONTEXT
 )
 
 
@@ -660,7 +660,7 @@ class ObservedData(_DomainObject):
         ('last_observed', TimestampProperty(required=True)),
         ('number_observed', IntegerProperty(min=1, max=999999999, required=True)),
         ('objects', ObservableProperty(spec_version='2.1')),
-        ('object_refs', ListProperty(ReferenceProperty(valid_types=["SCO", "SRO","detection"], spec_version='2.1'))),
+        ('object_refs', ListProperty(ReferenceProperty(valid_types=["SCO", "SRO","detection","alert"], spec_version='2.1'))),
         ('revoked', BooleanProperty(default=lambda: False)),
         ('labels', ListProperty(StringProperty)),
         ('confidence', IntegerProperty()),
@@ -874,6 +874,10 @@ class Detection(_DomainObject):
         ('engine', StringProperty()),
         ('revoked', BooleanProperty(default=lambda: False)),
         ('labels', ListProperty(StringProperty)),
+        ('tp_counts', IntegerProperty(default=lambda: 0)),
+        ('fp_counts', IntegerProperty(default=lambda: 0)),
+        ('tn_counts', IntegerProperty(default=lambda: 0)),
+        ('fn_counts', IntegerProperty(default=lambda: 0)),
         ('severity_score', IntegerProperty()),
         ('severity_scale', StringProperty()),
         ('external_references', ListProperty(ExternalReference)),
@@ -889,6 +893,34 @@ class Detection(_DomainObject):
                 raise ValueError("'%s' is not a recognized category." % kwargs['engine'])
 
         super(Detection, self).__init__(*args, **kwargs)
+
+class Alert(_DomainObject):
+    """For more detailed information on this object's properties, see
+    `the STIX 2.1 specification <https://docs.oasis-open.org/cti/stix/v2.1/os/stix-v2.1-os.html#_q5ytzmajn6re>`__.
+    """
+
+    _type = 'alert'
+    _properties = OrderedDict([
+        ('type', TypeProperty(_type, spec_version='2.1')),
+        ('spec_version', StringProperty(fixed='2.1')),
+        ('id', IDProperty(_type, spec_version='2.1')),
+        ('created_by_ref', ReferenceProperty(valid_types='identity', spec_version='2.1')),
+        ('created', TimestampProperty(default=lambda: NOW, precision='millisecond', precision_constraint='min')),
+        ('modified', TimestampProperty(default=lambda: NOW, precision='millisecond', precision_constraint='min')),
+        ('name', StringProperty()),
+        ('description', StringProperty()),
+        ('context', OpenVocabProperty(ALERT_CONTEXT, required=True)),
+        ('object_refs', ListProperty(ReferenceProperty(valid_types=["SCO", "SDO", "SRO","detection"], spec_version='2.1'), required=True)),
+        ('labels', ListProperty(StringProperty)),
+        ('confidence', IntegerProperty()),
+        ('external_references', ListProperty(ExternalReference)),
+        ('object_marking_refs', ListProperty(ReferenceProperty(valid_types='marking-definition', spec_version='2.1'))),
+        ('granular_markings', ListProperty(GranularMarking)),
+        ('extensions', ExtensionsProperty(spec_version='2.1')),
+    ])
+    def __init__(self, *args, **kwargs):
+        super(Alert, self).__init__(*args, **kwargs)
+
 def CustomObject(type='x-custom-type', properties=None, extension_name=None, is_sdo=True):
     """Custom STIX Object type decorator.
 

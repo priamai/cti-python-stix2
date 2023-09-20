@@ -37,7 +37,7 @@ from .sdo import (
     AttackPattern, Campaign, CourseOfAction, CustomObject, Grouping, Identity,
     Incident, Indicator, Infrastructure, IntrusionSet, Location, Malware,
     MalwareAnalysis, Note, ObservedData, Opinion, Report, ThreatActor, Tool,
-    Vulnerability,Detection
+    Vulnerability,Detection,Alert
 )
 from .sro import Relationship, Sighting
 
@@ -67,7 +67,8 @@ OBJ_MAP = {
     'sighting': Sighting,
     'extension-definition': ExtensionDefinition,
     'vulnerability': Vulnerability,
-    'detection':Detection
+    'detection':Detection,
+    'alert':Alert
 }
 
 OBJ_MAP_OBSERVABLE = {
@@ -129,7 +130,7 @@ __all__ = """
     AttackPattern, Campaign, CourseOfAction, CustomObject, Grouping, Identity,
     Incident, Indicator, Infrastructure, IntrusionSet, Location, Malware,
     MalwareAnalysis, Note, ObservedData, Opinion, Report, ThreatActor, Tool,
-    Vulnerability,Detection
+    Vulnerability,Detection,Alert
 
     Relationship, Sighting,
 
