@@ -1,5 +1,5 @@
 import unittest
-from stix2 import Detection,Identity,ObservedData,Alert
+from stix2 import Detection,Identity,ObservedData,Alert,Asset,IPv4Address
 from stix2.v21.vocab import ALERT_CONTEXT,ALERT_CONTEXT_RULE
 from stix2.base import NOW
 
@@ -19,6 +19,14 @@ class PriamTestCase(unittest.TestCase):
                            object_refs=[detection])
 
         self.assertEqual(obs.object_refs, [detection.id])
+
+    def test_asset(self):
+        siem_host = IPv4Address(value="10.0.0.1")
+
+        asset = Asset(value="computer.contoso.org",labels=["a","b","c"],resolves_to_refs=[siem_host])
+
+        self.assertEqual(asset.value,"computer.contoso.org")
+
     def test_identity(self):
         id1 = Identity(name="Company")
         id2 = Identity(name="Company")

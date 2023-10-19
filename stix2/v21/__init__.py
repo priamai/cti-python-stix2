@@ -33,6 +33,11 @@ from .observables import (
     WindowsProcessExt, WindowsRegistryKey, WindowsRegistryValueType,
     WindowsServiceExt, X509Certificate, X509V3ExtensionsType,
 )
+
+from .veris import (
+    Asset,
+)
+
 from .sdo import (
     AttackPattern, Campaign, CourseOfAction, CustomObject, Grouping, Identity,
     Incident, Indicator, Infrastructure, IntrusionSet, Location, Malware,
@@ -90,6 +95,7 @@ OBJ_MAP_OBSERVABLE = {
     'user-account': UserAccount,
     'windows-registry-key': WindowsRegistryKey,
     'x509-certificate': X509Certificate,
+    'veris-asset':Asset
 }
 
 EXT_MAP = {
@@ -125,7 +131,7 @@ __all__ = """
     UNIXAccountExt, UserAccount, WindowsPEBinaryExt,
     WindowsPEOptionalHeaderType, WindowsPESection, WindowsProcessExt,
     WindowsRegistryKey, WindowsRegistryValueType, WindowsServiceExt,
-    X509Certificate, X509V3ExtensionsType,
+    X509Certificate, X509V3ExtensionsType, Asset
 
     AttackPattern, Campaign, CourseOfAction, CustomObject, Grouping, Identity,
     Incident, Indicator, Infrastructure, IntrusionSet, Location, Malware,
